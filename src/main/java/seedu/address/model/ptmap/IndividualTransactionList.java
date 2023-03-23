@@ -1,4 +1,4 @@
-package seedu.address.model.transaction;
+package seedu.address.model.ptmap;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
@@ -8,23 +8,17 @@ import java.util.List;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import seedu.address.model.transaction.Transaction;
+import seedu.address.model.transaction.UpdatedTransactionComparator;
 import seedu.address.model.transaction.exceptions.DuplicateTransactionException;
 import seedu.address.model.transaction.exceptions.TransactionNotFoundException;
 
-
-
-/**
- * Stores a global list of transactions. Adapted from UniquePersonList implementation from AB3.
- */
-public class UniqueTransactionList implements Iterable<Transaction> {
+public class IndividualTransactionList implements Iterable<Transaction> {
     private final ObservableList<Transaction> internalList = FXCollections.observableArrayList();
     private final ObservableList<Transaction> internalUnmodifiableList =
             FXCollections.unmodifiableObservableList(internalList);
-
     /**
-     * Check if the transaction list contains the specified transaction
-     * @param toCheck txn
-     * @return True if contained
+     * Returns true if the list contains an equivalent Transaction as the given argument.
      */
     public boolean contains(Transaction toCheck) {
         requireNonNull(toCheck);
@@ -41,6 +35,7 @@ public class UniqueTransactionList implements Iterable<Transaction> {
             throw new DuplicateTransactionException();
         }
         internalList.add(toAdd);
+        internalList.sorted(new UpdatedTransactionComparator());
     }
 
     /**
@@ -62,6 +57,7 @@ public class UniqueTransactionList implements Iterable<Transaction> {
         }
 
         internalList.set(index, editedTransaction);
+        internalList.sorted(new UpdatedTransactionComparator());
     }
 
     /**
@@ -73,24 +69,6 @@ public class UniqueTransactionList implements Iterable<Transaction> {
         if (!internalList.remove(toRemove)) {
             throw new TransactionNotFoundException();
         }
-    }
-
-    public void setTransactions(UniqueTransactionList replacement) {
-        requireNonNull(replacement);
-        internalList.setAll(replacement.internalList);
-    }
-
-    /**
-     * Replaces the contents of this list with {@code transactions}.
-     * {@code persons} must not contain duplicate transactions.
-     */
-    public void setTransactions(List<Transaction> transactions) {
-        requireAllNonNull(transactions);
-        if (!transactionsAreUnique(transactions)) {
-            throw new DuplicateTransactionException();
-        }
-
-        internalList.setAll(transactions);
     }
 
     /**
@@ -107,8 +85,8 @@ public class UniqueTransactionList implements Iterable<Transaction> {
     @Override
     public boolean equals(Object other) {
         return other == this // short circuit if same object
-                || (other instanceof UniqueTransactionList // instanceof handles nulls
-                && internalList.equals(((UniqueTransactionList) other).internalList));
+                || (other instanceof IndividualTransactionList // instanceof handles nulls
+                && internalList.equals(((IndividualTransactionList) other).internalList));
     }
     @Override
     public int hashCode() {

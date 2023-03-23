@@ -4,7 +4,7 @@ skinparam arrowThickness 1.1
 skinparam arrowColor MODEL_COLOR
 skinparam classBackgroundColor MODEL_COLOR
 
-Package Model <<Rectangle>>{
+Package Models <<Rectangle>>{
 Class "<<interface>>\nReadOnlyAddressBook" as ReadOnlyAddressBook
 Class "<<interface>>\nReadOnlyUserPrefs" as ReadOnlyUserPrefs
 Class "<<interface>>\nModel" as Model
@@ -20,6 +20,12 @@ Class Name
 Class Phone
 Class Tag
 
+Class UniqueTransactionList
+Class Transaction
+Class Description
+Class Owner
+Class TxnStatus
+Class Value
 }
 
 Class HiddenOutside #FFFFFF
@@ -27,15 +33,24 @@ HiddenOutside ..> Model
 
 AddressBook .up.|> ReadOnlyAddressBook
 
+Model .right.--> ReadOnlyUserPrefs
+Model .left.--> ReadOnlyAddressBook
+
 ModelManager .up.|> Model
-Model .right.> ReadOnlyUserPrefs
-Model .left.> ReadOnlyAddressBook
-ModelManager -left-> "1" AddressBook
-ModelManager -right-> "1" UserPrefs
+ModelManager o-left-> "1" AddressBook
+ModelManager o-right-> "1" UserPrefs
 UserPrefs .up.|> ReadOnlyUserPrefs
 
 AddressBook *--> "1" UniquePersonList
-UniquePersonList --> "~* all" Person
+AddressBook *--> "1" UniqueTransactionList
+UniquePersonList o--> "*" Person
+UniqueTransactionList o--> "*" Transaction
+
+Transaction *--> Description
+Transaction *--> Owner
+Transaction *--> TxnStatus
+Transaction *--> Value
+
 Person *--> Name
 Person *--> Phone
 Person *--> Email
@@ -46,5 +61,7 @@ Name -[hidden]right-> Phone
 Phone -[hidden]right-> Address
 Address -[hidden]right-> Email
 
-ModelManager -->"~* filtered" Person
+ModelManager ----->" ~* filtered list" Person
+ModelManager ----->" ~* filtered list" Transaction
+
 @enduml

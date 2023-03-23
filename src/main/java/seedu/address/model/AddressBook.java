@@ -8,7 +8,7 @@ import java.util.List;
 import javafx.collections.ObservableList;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.UniquePersonList;
-import seedu.address.model.transaction.PersonTransactionMap;
+import seedu.address.model.ptmap.PersonTransactionMap;
 import seedu.address.model.transaction.Transaction;
 import seedu.address.model.transaction.UniqueTransactionList;
 
@@ -20,7 +20,7 @@ public class AddressBook implements ReadOnlyAddressBook {
 
     private final UniquePersonList persons;
     private final UniqueTransactionList transactions;
-    private final PersonTransactionMap personTransactionRelation;
+    private final PersonTransactionMap personTxnMap;
 
     /*
      * The 'unusual' code block below is a non-static initialization block, sometimes used to avoid duplication
@@ -32,7 +32,7 @@ public class AddressBook implements ReadOnlyAddressBook {
     {
         persons = new UniquePersonList();
         transactions = new UniqueTransactionList();
-        personTransactionRelation = new PersonTransactionMap();
+        personTxnMap = new PersonTransactionMap();
     }
 
     public AddressBook() {}
@@ -53,6 +53,8 @@ public class AddressBook implements ReadOnlyAddressBook {
      */
     public void setPersons(List<Person> persons) {
         this.persons.setPersons(persons);
+        this.personTxnMap.setPersons(persons); // Initiates a new empty trancation list, old transaction records will be
+        //                                     deleted
     }
 
     /**
@@ -61,6 +63,7 @@ public class AddressBook implements ReadOnlyAddressBook {
      */
     public void setTransactions(List<Transaction> transactions) {
         this.transactions.setTransactions(transactions);
+        this.personTxnMap.setTransactions(transactions);
     }
 
     /**
@@ -71,6 +74,7 @@ public class AddressBook implements ReadOnlyAddressBook {
 
         setPersons(newData.getPersonList());
         setTransactions(newData.getTransactionList());
+        setPersonTxnMap(newData.getPersonTxnMap());
     }
 
     //================= person-level operations ==================================
@@ -89,6 +93,7 @@ public class AddressBook implements ReadOnlyAddressBook {
      */
     public void addPerson(Person p) {
         persons.add(p);
+        personTxnMap.addPerson(p);
     }
 
     /**
@@ -100,6 +105,7 @@ public class AddressBook implements ReadOnlyAddressBook {
         requireNonNull(editedPerson);
 
         persons.setPerson(target, editedPerson);
+        personTxnMap.setPersons(target, editedPerson); // Assumes name changed?
     }
 
     /**
@@ -108,6 +114,7 @@ public class AddressBook implements ReadOnlyAddressBook {
      */
     public void removePerson(Person key) {
         persons.remove(key);
+        personTxnMap.removePerson(key);
     }
 
     //================= transaction-level operations ==================================
@@ -131,8 +138,7 @@ public class AddressBook implements ReadOnlyAddressBook {
         requireAllNonNull(t);
         transactions.add(t);
 
-        //personTransactionRelation.addRelation(t);
-        //TODO: Add customer-transaction relationship
+        personTxnMap.addTransaction(t);
     }
 
     /**
@@ -144,6 +150,8 @@ public class AddressBook implements ReadOnlyAddressBook {
     public void setTransaction(Transaction target, Transaction editedTransaction) {
         requireNonNull(editedTransaction);
         transactions.setTransaction(target, editedTransaction);
+
+        personTxnMap.setTransaction(target, editedTransaction);
     }
 
     /**
@@ -152,6 +160,7 @@ public class AddressBook implements ReadOnlyAddressBook {
      */
     public void removeTransaction(Transaction key) {
         transactions.remove(key);
+        personTxnMap.removeTransaction(key);
     }
 
     //================= util methods ==================================

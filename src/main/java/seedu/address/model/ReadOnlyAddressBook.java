@@ -2,6 +2,7 @@ package seedu.address.model;
 
 import javafx.collections.ObservableList;
 import seedu.address.model.person.Person;
+import seedu.address.model.ptmap.PersonTransactionMap;
 import seedu.address.model.transaction.Transaction;
 
 /**
@@ -15,4 +16,5 @@ public interface ReadOnlyAddressBook {
      */
     ObservableList<Person> getPersonList();
     ObservableList<Transaction> getTransactionList();
+    ObservableList<PersonTransactionMap> getPersonTxnMap();
 }
