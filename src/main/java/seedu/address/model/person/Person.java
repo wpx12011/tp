@@ -60,6 +60,29 @@ public class Person {
         this.tasks = tasks;
     }
 
+
+    /**
+     * Special constructor for constructing a Txn owner, only name field important
+     */
+    public Person(Name name, Gender gender, Phone phone, Email email, Company company, Location location,
+                  Occupation occupation, JobTitle jobTitle, Address address, Remark remark) {
+        requireAllNonNull(name, gender, phone, email, company, location,
+                occupation, jobTitle, address, remark);
+        this.name = name;
+        this.gender = gender;
+        this.phone = phone;
+        this.email = email;
+        this.address = address;
+        this.company = company;
+        this.location = location;
+        this.occupation = occupation;
+        this.jobTitle = jobTitle;
+        this.remark = remark;
+        this.status = new LeadStatus(LeadStatusName.UNCONTACTED.getLabel());
+        this.tasks = new TaskList();
+    }
+
+
     /**
      * Constructor for a person with a given LeadStatus.
      */
@@ -159,14 +182,10 @@ public class Person {
             return occupation.toString();
         case "job title":
             return jobTitle.toString();
-        case "remark":
-            return remark.toString();
         case "status":
             return status.getStatusName().getLabel();
-        case "task": //"should be changed to tasklist but need to check through based on where it is
-            return tasks.toString();
         default:
-            throw new IllegalValueException("Attribute does not exists!");
+            throw new IllegalValueException("Attribute does not exist!");
         }
     }
 

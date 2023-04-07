@@ -11,7 +11,6 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_OCCUPATION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
-import static seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -36,6 +35,7 @@ import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
 import seedu.address.model.person.Remark;
 import seedu.address.model.person.TaskList;
+import seedu.address.model.person.status.LeadStatus;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -65,7 +65,7 @@ public class EditCommand extends Command {
 
     public static final String MESSAGE_EDIT_PERSON_SUCCESS = "Edited Person: %1$s";
     public static final String MESSAGE_NOT_EDITED = "At least one field to edit must be provided.";
-    public static final String MESSAGE_DUPLICATE_PERSON = "This person already exists in the address book.";
+    public static final String MESSAGE_DUPLICATE_PERSON = "This person already exists in the contact list.";
 
     private final Index index;
     private final EditPersonDescriptor editPersonDescriptor;
@@ -99,7 +99,6 @@ public class EditCommand extends Command {
         }
 
         model.setPerson(personToEdit, editedPerson);
-        model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
         return new CommandResult(String.format(MESSAGE_EDIT_PERSON_SUCCESS, editedPerson));
     }
 
@@ -122,9 +121,12 @@ public class EditCommand extends Command {
         Remark updatedRemark = personToEdit.getRemark();
         Set<Tag> updatedTags = editPersonDescriptor.getTags().orElse(personToEdit.getTags());
         TaskList updatedTasks = personToEdit.getTasks();
+        // lead status is not updated when a person is edited, by design
+        LeadStatus unchangedLeadStatus = personToEdit.getStatus();
 
         return new Person(updatedName, updatedGender, updatedPhone, updatedEmail, updateCompany, updatedLocation,
-                updatedOccupation, updatedJobTitle, updatedAddress, updatedRemark, updatedTags, updatedTasks);
+                updatedOccupation, updatedJobTitle, updatedAddress, updatedRemark, updatedTags, updatedTasks,
+                unchangedLeadStatus);
     }
 
     @Override
